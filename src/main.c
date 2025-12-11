@@ -12,6 +12,7 @@ void table_init(t_table *table, int n, void(*f(void *)))
     {
         table->forks[i] = FORK_FREE;
         table->philos[i].state = STATE_THINKING;
+        table->philos[i].index = i;
         table->philos[i].forks_p = &table->forks;
         pthread_create(&table->philos[i].thread, NULL, f, &table->philos[i]);
         pthread_join(table->philos[i].thread, NULL);
@@ -22,8 +23,7 @@ void table_init(t_table *table, int n, void(*f(void *)))
 void *test_func(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
-    printf("state %d fork0 %d\n", philo->state, *philo->forks_p[0]);
-    *philo->forks_p[0] = *philo->forks_p[0] == 0 ? 1 : 0;
+    (*philo->forks_p)[philo->index] = FORK_INUSE;
     return (NULL);
 }
 
@@ -33,5 +33,10 @@ int main()
 
     table = malloc(sizeof(t_table));
     table_init(table, 4, test_func);
+    for (int i = 0; i < table->philo_count; i++)
+    {
+        printf("philo state: %d fork: %d\n", table->philos[i].state, table->forks[i]);
+    }
+
     return (0);
 }

@@ -16,6 +16,7 @@ typedef struct s_philo
 {
     pthread_t thread;
     int state;
+    int index;
     struct timeval eaten_at;
     struct timeval fell_asleep_at;
     int **forks_p;
