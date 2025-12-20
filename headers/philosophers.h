@@ -8,6 +8,7 @@
 #define STATE_EATING 1
 #define STATE_SLEEPING 2
 #define STATE_THINKING 3
+#define STATE_DEAD 4
 
 #define FORK_FREE 0
 #define FORK_INUSE 1

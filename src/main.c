@@ -27,16 +27,28 @@ void *test_func(void *arg)
     return (NULL);
 }
 
+void *test_func2(void *arg)
+{
+    t_philo *philo = (t_philo *)arg;
+
+    while (philo->state != STATE_DEAD)
+    {
+        
+    }
+    return (NULL);
+}
+
 int main()
 {
     t_table *table;
 
     table = malloc(sizeof(t_table));
     table_init(table, 4, test_func);
-    for (int i = 0; i < table->philo_count; i++)
-    {
-        printf("philo state: %d fork: %d\n", table->philos[i].state, table->forks[i]);
-    }
+    // for (int i = 0; i < table->philo_count; i++)
+    // {
+    //     printf("philo state: %d fork: %d\n", table->philos[i].state, table->forks[i]);
+    // }
+
 
     return (0);
 }
