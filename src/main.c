@@ -43,11 +43,5 @@ int main()
 
     table = malloc(sizeof(t_table));
     table_init(table, 4, test_func);
-    // for (int i = 0; i < table->philo_count; i++)
-    // {
-    //     printf("philo state: %d fork: %d\n", table->philos[i].state, table->forks[i]);
-    // }
-
-
     return (0);
 }
