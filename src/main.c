@@ -15,7 +15,6 @@ void table_init(t_table *table, int n, void(*f(void *)))
         table->philos[i].index = i;
         table->philos[i].forks_p = &table->forks;
         pthread_create(&table->philos[i].thread, NULL, f, &table->philos[i]);
-        //pthread_join(table->philos[i].thread, NULL);
         i++;
     }
     i = 0;
