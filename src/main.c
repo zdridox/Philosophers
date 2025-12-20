@@ -15,6 +15,12 @@ void table_init(t_table *table, int n, void(*f(void *)))
         table->philos[i].index = i;
         table->philos[i].forks_p = &table->forks;
         pthread_create(&table->philos[i].thread, NULL, f, &table->philos[i]);
+        //pthread_join(table->philos[i].thread, NULL);
+        i++;
+    }
+    i = 0;
+    while (i < n)
+    {
         pthread_join(table->philos[i].thread, NULL);
         i++;
     }
@@ -23,17 +29,10 @@ void table_init(t_table *table, int n, void(*f(void *)))
 void *test_func(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
-    (*philo->forks_p)[philo->index] = FORK_INUSE;
-    return (NULL);
-}
-
-void *test_func2(void *arg)
-{
-    t_philo *philo = (t_philo *)arg;
 
     while (philo->state != STATE_DEAD)
     {
-        
+        printf("index: %d\n", philo->index);
     }
     return (NULL);
 }
