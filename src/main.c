@@ -66,7 +66,8 @@ void *test_func(void *arg)
         if(((now.tv_sec - philo->eaten_at.tv_sec) * 1000 + (now.tv_usec - philo->eaten_at.tv_usec) / 1000) > time_to_die) {
             philo->state = STATE_DEAD;
             printf("philo %d starved to death\n", philo->index);
-            continue;
+            pthread_mutex_unlock(philo->lock_p);
+            break;
         }
         if(philo->state == STATE_SLEEPING) {
             if(((now.tv_sec - philo->fell_asleep_at.tv_sec) * 1000 + (now.tv_usec - philo->fell_asleep_at.tv_usec) / 1000) > time_to_sleep) {
