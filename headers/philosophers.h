@@ -1,3 +1,6 @@
+#ifndef PHILOSOPHERS_H
+#define PHILOSOPHERS_H
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -21,11 +24,16 @@ typedef struct s_philo
     struct timeval eaten_at;
     struct timeval fell_asleep_at;
     int **forks_p;
+    pthread_mutex_t *lock_p;
+    int *philo_count_p;
 } t_philo;
 
 typedef struct s_table
 {
+    pthread_mutex_t lock;
     int philo_count;
     t_philo *philos;
     int *forks;
 } t_table;
+
+#endif
