@@ -1,21 +1,10 @@
 #include "../headers/philosophers.h"
 
+// add a control thread that will stop the programe when a philo is dead  / 
+// and that main thread can join it and wait only for it
 
-// TODO: /
-// MUTEX on each fork and not on the whole thread
-// use usleep for sleeping / eating instead of gettimeofday
-// make a control thread that will be controlling the deaths of philos etc.
-
-
-// not starve
-// int philo_count = 5;
-// int time_to_eat = 200;
-// int time_to_sleep = 200;
-// int time_to_die = 800;
-
-// starve
-int philo_count = 4;
-int time_to_eat = 310;
+int philo_count = 5;
+int time_to_eat = 200;
 int time_to_sleep = 200;
 int time_to_die = 800;
 
@@ -60,7 +49,6 @@ void *test_func(void *arg)
     gettimeofday(&philo->eaten_at, NULL);
     while (philo->state != STATE_DEAD)
     {
-        gettimeofday(&now, NULL);
         if(philo->index != (*philo->philo_count_p - 1))
             offset = 1;
         else 
@@ -71,44 +59,40 @@ void *test_func(void *arg)
             second_index = philo->index;
             first_index = philo->index + offset;
         }
+        gettimeofday(&now, NULL);
         if(((now.tv_sec - philo->eaten_at.tv_sec) * 1000 + (now.tv_usec - philo->eaten_at.tv_usec) / 1000) > time_to_die) {
             philo->state = STATE_DEAD;
             printf("philo %d starved to death\n", philo->index);
             break;
         }
         if(philo->state == STATE_SLEEPING) {
-            if(((now.tv_sec - philo->fell_asleep_at.tv_sec) * 1000 + (now.tv_usec - philo->fell_asleep_at.tv_usec) / 1000) > time_to_sleep) {
-                philo->state = STATE_THINKING;
-                printf("philo %d is thinking\n", philo->index);
-            }
+            philo->state = STATE_THINKING;
+            printf("philo %d is thinking\n", philo->index);
         }
-        if(philo->state != STATE_EATING && philo->state != STATE_SLEEPING) {
                 pthread_mutex_lock(&(*philo->mutexes_p)[first_index]);
                 pthread_mutex_lock(&(*philo->mutexes_p)[second_index]);
                 if((*philo->forks_p)[philo->index] == FORK_FREE && (*philo->forks_p)[philo->index + offset] == FORK_FREE) {
                     (*philo->forks_p)[philo->index] = FORK_INUSE;
                     (*philo->forks_p)[philo->index + offset] = FORK_INUSE;
+                    pthread_mutex_unlock(&(*philo->mutexes_p)[second_index]);
+                    pthread_mutex_unlock(&(*philo->mutexes_p)[first_index]);
                     philo->state = STATE_EATING;
                     gettimeofday(&philo->eaten_at, NULL);
                     printf("philo %d is eating\n", philo->index);
-                }
-                pthread_mutex_unlock(&(*philo->mutexes_p)[philo->index]);
-                pthread_mutex_unlock(&(*philo->mutexes_p)[philo->index + offset]);
-        }
-        if (philo->state == STATE_EATING){
-            if(((now.tv_sec - philo->eaten_at.tv_sec) * 1000 + (now.tv_usec - philo->eaten_at.tv_usec) / 1000) > time_to_eat) {
+                    usleep(time_to_eat * 1000);
                     pthread_mutex_lock(&(*philo->mutexes_p)[first_index]);
                     pthread_mutex_lock(&(*philo->mutexes_p)[second_index]);
                     (*philo->forks_p)[philo->index] = FORK_FREE;
                     (*philo->forks_p)[philo->index + offset] = FORK_FREE;
-                    pthread_mutex_unlock(&(*philo->mutexes_p)[philo->index]);
-                    pthread_mutex_unlock(&(*philo->mutexes_p)[philo->index + offset]);
-                    gettimeofday(&philo->eaten_at, NULL);
-                    gettimeofday(&philo->fell_asleep_at, NULL);
+                    pthread_mutex_unlock(&(*philo->mutexes_p)[second_index]);
+                    pthread_mutex_unlock(&(*philo->mutexes_p)[first_index]);
                     philo->state = STATE_SLEEPING;
-                    printf("philo %d fell asleep\n", philo->index);
-            }
-        }
+                    printf("philo %d is sleeping\n", philo->index);
+                    usleep(time_to_sleep * 1000);
+                } else {
+                    pthread_mutex_unlock(&(*philo->mutexes_p)[second_index]);
+                    pthread_mutex_unlock(&(*philo->mutexes_p)[first_index]);
+                }
     }
     return (NULL);
 }
