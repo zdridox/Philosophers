@@ -1,28 +1,16 @@
 #include "../headers/philosophers.h"
 
-int ft_atoi(const char *str)
-{
+int safe_p_atoi(const char *str) {
     int res;
-    int modulator;
+    int digit;
 
     res = 0;
-    modulator = 1;
-    while (*str && (*str == 9 || *str == 10 || *str == 11 || *str == 12 || *str == 13 || *str == 32))
-        str++;
-    if (*str == '-' || *str == '+')
-    {
-        if (!(*(str + 1) >= '0' && *(str + 1) <= '9'))
-            return (0);
-        if (*str == '-')
-            modulator = -1;
+    while (*str && (*(str) >= '0' && *(str) <= '9')) {
+        digit = *str - '0';
+        if(res > (INT_MAX - digit) / 10)
+            return (-1);
+        res = res * 10 + digit;
         str++;
     }
-    while (*str && (*(str) >= '0' && *(str) <= '9'))
-    {
-        res += *str - 48;
-        if ((*(str + 1) >= '0' && *(str + 1) <= '9'))
-            res *= 10;
-        str++;
-    }
-    return (res * modulator);
+    return (res);
 }
