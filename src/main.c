@@ -1,12 +1,25 @@
 #include "../headers/philosophers.h"
 
-// add a control thread that will stop the programe when a philo is dead  / 
-// and that main thread can join it and wait only for it
+void *control_thread_f(void *arg)
+{
+    t_table *table;
+    int i;
 
-int philo_count = 5;
-int time_to_eat = 200;
-int time_to_sleep = 200;
-int time_to_die = 800;
+    table = (t_table *)arg;
+    i = 0;
+    while (1)
+    {
+        if (i == table->philo_count)
+            i = 0;
+        if (table->philos[i].state == STATE_DEAD)
+        {
+            printf("philo %d starved to death\n", table->philos[i].index);
+            break;
+        }
+        ++i;
+    }
+    return (NULL);
+}
 
 void table_init(t_table *table, int n, void(*f(void *)))
 {
@@ -23,85 +36,26 @@ void table_init(t_table *table, int n, void(*f(void *)))
         table->forks[i] = FORK_FREE;
         table->philos[i].state = STATE_THINKING;
         table->philos[i].index = i;
-        table->philos[i].forks_p = &table->forks;
-        table->philos[i].mutexes_p = &table->fork_mutexes;
-        table->philos[i].philo_count_p = &table->philo_count;
+        table->philos[i].table = table;
         pthread_create(&table->philos[i].thread, NULL, f, &table->philos[i]);
         i++;
     }
     i = 0;
-    while (i < n)
-    {
-        pthread_join(table->philos[i].thread, NULL);
-        i++;
-    }
 }
 
-void *test_func(void *arg)
-{
-    t_philo *philo = (t_philo *)arg;
-    int offset;
-    struct timeval now;
-    int first_index;
-    int second_index;
-
-    // philo starts with a full belly :)
-    gettimeofday(&philo->eaten_at, NULL);
-    while (philo->state != STATE_DEAD)
-    {
-        if(philo->index != (*philo->philo_count_p - 1))
-            offset = 1;
-        else 
-            offset = -philo->index;
-        first_index = philo->index;
-        second_index = philo->index + offset;
-        if(first_index > second_index) {
-            second_index = philo->index;
-            first_index = philo->index + offset;
-        }
-        gettimeofday(&now, NULL);
-        if(((now.tv_sec - philo->eaten_at.tv_sec) * 1000 + (now.tv_usec - philo->eaten_at.tv_usec) / 1000) > time_to_die) {
-            philo->state = STATE_DEAD;
-            printf("philo %d starved to death\n", philo->index);
-            break;
-        }
-        if(philo->state == STATE_SLEEPING) {
-            philo->state = STATE_THINKING;
-            printf("philo %d is thinking\n", philo->index);
-        }
-                pthread_mutex_lock(&(*philo->mutexes_p)[first_index]);
-                pthread_mutex_lock(&(*philo->mutexes_p)[second_index]);
-                if((*philo->forks_p)[philo->index] == FORK_FREE && (*philo->forks_p)[philo->index + offset] == FORK_FREE) {
-                    (*philo->forks_p)[philo->index] = FORK_INUSE;
-                    (*philo->forks_p)[philo->index + offset] = FORK_INUSE;
-                    pthread_mutex_unlock(&(*philo->mutexes_p)[second_index]);
-                    pthread_mutex_unlock(&(*philo->mutexes_p)[first_index]);
-                    philo->state = STATE_EATING;
-                    gettimeofday(&philo->eaten_at, NULL);
-                    printf("philo %d is eating\n", philo->index);
-                    usleep(time_to_eat * 1000);
-                    pthread_mutex_lock(&(*philo->mutexes_p)[first_index]);
-                    pthread_mutex_lock(&(*philo->mutexes_p)[second_index]);
-                    (*philo->forks_p)[philo->index] = FORK_FREE;
-                    (*philo->forks_p)[philo->index + offset] = FORK_FREE;
-                    pthread_mutex_unlock(&(*philo->mutexes_p)[second_index]);
-                    pthread_mutex_unlock(&(*philo->mutexes_p)[first_index]);
-                    philo->state = STATE_SLEEPING;
-                    printf("philo %d is sleeping\n", philo->index);
-                    usleep(time_to_sleep * 1000);
-                } else {
-                    pthread_mutex_unlock(&(*philo->mutexes_p)[second_index]);
-                    pthread_mutex_unlock(&(*philo->mutexes_p)[first_index]);
-                }
-    }
-    return (NULL);
-}
-
-int main()
+int main(int argc, char **argv)
 {
     t_table *table;
+    pthread_t control_thread;
 
+    if (argc != 5)
+        return (0);
     table = malloc(sizeof(t_table));
-    table_init(table, philo_count, test_func);
+    table->time_to_die = ft_atoi(argv[2]);
+    table->time_to_eat = ft_atoi(argv[3]);
+    table->time_to_sleep = ft_atoi(argv[4]);
+    table_init(table, ft_atoi(argv[1]), philosopher);
+    pthread_create(&control_thread, NULL, control_thread_f, table);
+    pthread_join(control_thread, NULL);
     return (0);
 }

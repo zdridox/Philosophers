@@ -23,9 +23,7 @@ typedef struct s_philo
     int index;
     struct timeval eaten_at;
     struct timeval fell_asleep_at;
-    int **forks_p;
-    pthread_mutex_t **mutexes_p;
-    int *philo_count_p;
+    struct s_table *table;
 } t_philo;
 
 typedef struct s_table
@@ -34,6 +32,12 @@ typedef struct s_table
     t_philo *philos;
     int *forks;
     pthread_mutex_t *fork_mutexes;
+    int time_to_eat;
+    int time_to_sleep;
+    int time_to_die;
 } t_table;
+
+void *philosopher(void *arg);
+int ft_atoi(const char *str);
 
 #endif
