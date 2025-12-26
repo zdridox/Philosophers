@@ -20,6 +20,9 @@ typedef struct s_philo
     int state;
     int index;
     int times_eaten;
+    pthread_mutex_t eaten_at_m;
+    pthread_mutex_t times_eaten_m;
+    pthread_mutex_t state_m;
     struct timeval eaten_at;
     struct timeval fell_asleep_at;
     struct s_table *table;
@@ -28,6 +31,7 @@ typedef struct s_philo
 typedef struct s_table
 {
     int sim_flag;
+    pthread_mutex_t sim_flag_m;
     int philo_count;
     t_philo *philos;
     pthread_mutex_t *fork_mutexes;
@@ -40,5 +44,7 @@ typedef struct s_table
 void *philosopher(void *arg);
 int safe_p_atoi(const char *str);
 int validate_input(int argc, char **argv);
+void set_state(t_philo *philo, int new_state);
+int get_state(t_philo *philo);
 
 #endif
