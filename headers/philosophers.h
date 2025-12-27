@@ -51,5 +51,6 @@ int validate_input(int argc, char **argv);
 void set_state(t_philo *philo, t_state new_state);
 t_state get_state(t_philo *philo);
 void print_state(t_philo *philo, int fork_flag);
+int check_sim_state(t_philo *philo);
 
 #endif

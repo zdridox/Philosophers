@@ -1,15 +1,5 @@
 #include "../headers/philosophers.h"
 
-int check_sim_state(t_philo *philo)
-{
-    int res;
-
-    pthread_mutex_lock(&philo->table->sim_flag_m);
-    res = philo->table->sim_flag;
-    pthread_mutex_unlock(&philo->table->sim_flag_m);
-    return (res);
-}
-
 void handle_indexes(t_philo *philo, int *offset, int *f_index, int *s_index)
 {
     if (philo->index != (philo->table->philo_count - 1))
@@ -74,11 +64,12 @@ void philo_logic(t_philo *philo, int f_index, int s_index)
 
 void *philosopher(void *arg)
 {
-    t_philo *philo = (t_philo *)arg;
+    t_philo *philo;
     int offset;
     int first_index;
     int second_index;
 
+    philo = (t_philo *)arg;
     if (philo->table->philo_count == 1)
         return (NULL);
 

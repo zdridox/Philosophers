@@ -84,7 +84,6 @@ void table_init(t_table *table, int n, void *(*f)(void *))
 	i = 0;
 	while (i < n)
 	{
-		pthread_mutex_init(&table->fork_mutexes[i], NULL);
 		pthread_mutex_init(&table->philos[i].eaten_at_m, NULL);
 		pthread_mutex_init(&table->philos[i].state_m, NULL);
 		pthread_mutex_init(&table->philos[i].times_eaten_m, NULL);

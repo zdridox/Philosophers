@@ -40,3 +40,13 @@ void print_state(t_philo *philo, int fork_flag)
             printf("%ld %d died\n", time_diff, philo->index);
     }
 }
+
+int check_sim_state(t_philo *philo)
+{
+    int res;
+
+    pthread_mutex_lock(&philo->table->sim_flag_m);
+    res = philo->table->sim_flag;
+    pthread_mutex_unlock(&philo->table->sim_flag_m);
+    return (res);
+}
