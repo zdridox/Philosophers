@@ -41,12 +41,12 @@ void print_state(t_philo *philo, int fork_flag)
     }
 }
 
-int check_sim_state(t_philo *philo)
+int check_sim_state(t_table *table)
 {
     int res;
 
-    pthread_mutex_lock(&philo->table->sim_flag_m);
-    res = philo->table->sim_flag;
-    pthread_mutex_unlock(&philo->table->sim_flag_m);
+    pthread_mutex_lock(&table->sim_flag_m);
+    res = table->sim_flag;
+    pthread_mutex_unlock(&table->sim_flag_m);
     return (res);
 }

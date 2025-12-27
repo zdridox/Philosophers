@@ -51,6 +51,11 @@ int validate_input(int argc, char **argv);
 void set_state(t_philo *philo, t_state new_state);
 t_state get_state(t_philo *philo);
 void print_state(t_philo *philo, int fork_flag);
-int check_sim_state(t_philo *philo);
+int check_sim_state(t_table *table);
+void philo_think(t_philo *philo);
+void philo_take_fork(t_philo *philo, int fork_index);
+void philo_eat(t_philo *philo, int f_index, int s_index);
+void philo_sleep(t_philo *philo);
+void *control_thread_f(void *arg);
 
 #endif
