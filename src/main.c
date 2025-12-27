@@ -13,8 +13,8 @@ void death_check(t_table *table)
 		if (((now.tv_sec - table->philos[i].eaten_at.tv_sec) * 1000 + (now.tv_usec - table->philos[i].eaten_at.tv_usec) / 1000) > table->time_to_die)
 		{
 			pthread_mutex_unlock(&table->philos[i].eaten_at_m);
-			set_state(&table->philos[i], STATE_DEAD);
-			printf("philo %d starved to death\n", table->philos[i].index);
+			set_state(&table->philos[i], DEAD);
+			print_state(&table->philos[i], 0);
 			pthread_mutex_lock(&table->sim_flag_m);
 			table->sim_flag = 0;
 			pthread_mutex_unlock(&table->sim_flag_m);
@@ -74,6 +74,7 @@ void table_init(t_table *table, int n, void *(*f)(void *))
 	table->philos = malloc(sizeof(t_philo) * n);
 	table->fork_mutexes = malloc(sizeof(pthread_mutex_t) * n);
 	table->sim_flag = 1;
+	gettimeofday(&table->start, NULL);
 	pthread_mutex_init(&table->sim_flag_m, NULL);
 	while (i < n)
 	{
@@ -87,7 +88,7 @@ void table_init(t_table *table, int n, void *(*f)(void *))
 		pthread_mutex_init(&table->philos[i].eaten_at_m, NULL);
 		pthread_mutex_init(&table->philos[i].state_m, NULL);
 		pthread_mutex_init(&table->philos[i].times_eaten_m, NULL);
-		table->philos[i].state = STATE_THINKING;
+		table->philos[i].state = THINKING;
 		table->philos[i].index = i;
 		table->philos[i].table = table;
 		table->philos[i].times_eaten = 0;

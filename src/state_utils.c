@@ -1,6 +1,6 @@
 #include "../headers/philosophers.h"
 
-void set_state(t_philo *philo, int new_state)
+void set_state(t_philo *philo, t_state new_state)
 {
     pthread_mutex_lock(&philo->state_m);
     philo->state = new_state;

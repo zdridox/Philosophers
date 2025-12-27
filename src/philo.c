@@ -27,16 +27,28 @@ void handle_indexes(t_philo *philo, int *offset, int *f_index, int *s_index)
 
 void philo_logic(t_philo *philo, int f_index, int s_index)
 {
-    if (get_state(philo) == STATE_SLEEPING)
+    if (get_state(philo) == SLEEPING)
     {
-        set_state(philo, STATE_THINKING);
+        set_state(philo, THINKING);
         if (check_sim_state(philo) != 1)
             return;
-        printf("philo %d is thinking\n", philo->index);
+        print_state(philo, 0);
     }
     pthread_mutex_lock(&(philo->table->fork_mutexes)[f_index]);
+    if (check_sim_state(philo) != 1)
+    {
+        pthread_mutex_unlock(&(philo->table->fork_mutexes)[f_index]);
+        return;
+    }
+    print_state(philo, 1);
     pthread_mutex_lock(&(philo->table->fork_mutexes)[s_index]);
-    set_state(philo, STATE_EATING);
+    if (check_sim_state(philo) != 1)
+    {
+        pthread_mutex_unlock(&(philo->table->fork_mutexes)[s_index]);
+        return;
+    }
+    print_state(philo, 1);
+    set_state(philo, EATING);
     pthread_mutex_lock(&philo->times_eaten_m);
     ++philo->times_eaten;
     pthread_mutex_unlock(&philo->times_eaten_m);
@@ -49,14 +61,14 @@ void philo_logic(t_philo *philo, int f_index, int s_index)
         pthread_mutex_unlock(&(philo->table->fork_mutexes)[f_index]);
         return;
     }
-    printf("philo %d is eating\n", philo->index);
+    print_state(philo, 0);
     usleep(philo->table->time_to_eat * 1000);
     pthread_mutex_unlock(&(philo->table->fork_mutexes)[s_index]);
     pthread_mutex_unlock(&(philo->table->fork_mutexes)[f_index]);
-    set_state(philo, STATE_SLEEPING);
+    set_state(philo, SLEEPING);
     if (check_sim_state(philo) != 1)
         return;
-    printf("philo %d is sleeping\n", philo->index);
+    print_state(philo, 0);
     usleep(philo->table->time_to_sleep * 1000);
 }
 

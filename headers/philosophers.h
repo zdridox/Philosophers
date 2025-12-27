@@ -9,15 +9,18 @@
 #include <string.h>
 #include <limits.h>
 
-#define STATE_EATING 1
-#define STATE_SLEEPING 2
-#define STATE_THINKING 3
-#define STATE_DEAD 4
+typedef enum s_state
+{
+    THINKING,
+    SLEEPING,
+    EATING,
+    DEAD
+} t_state;
 
 typedef struct s_philo
 {
     pthread_t thread;
-    int state;
+    t_state state;
     int index;
     int times_eaten;
     pthread_mutex_t eaten_at_m;
@@ -31,6 +34,7 @@ typedef struct s_philo
 typedef struct s_table
 {
     int sim_flag;
+    struct timeval start;
     pthread_mutex_t sim_flag_m;
     int philo_count;
     t_philo *philos;
@@ -44,7 +48,8 @@ typedef struct s_table
 void *philosopher(void *arg);
 int safe_p_atoi(const char *str);
 int validate_input(int argc, char **argv);
-void set_state(t_philo *philo, int new_state);
+void set_state(t_philo *philo, t_state new_state);
 int get_state(t_philo *philo);
+void print_state(t_philo *philo, int fork_flag);
 
 #endif
