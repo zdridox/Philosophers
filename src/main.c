@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/01/08 21:27:31 by mzdrodow          #+#    #+#             */
+/*   Updated: 2026/01/08 21:28:09 by mzdrodow         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../headers/philosophers.h"
 
-void init_fork_mutexes(t_table *table, int n)
+void	init_fork_mutexes(t_table *table, int n)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < n)
@@ -12,9 +24,9 @@ void init_fork_mutexes(t_table *table, int n)
 	}
 }
 
-void table_init(t_table *table, int n, void *(*f)(void *))
+void	table_init(t_table *table, int n, void *(*f)(void *))
 {
-	int i;
+	int	i;
 
 	i = 0;
 	table->philo_count = n;
@@ -39,7 +51,7 @@ void table_init(t_table *table, int n, void *(*f)(void *))
 	}
 }
 
-void set_input_vars(t_table *table, int argc, char **argv)
+void	set_input_vars(t_table *table, int argc, char **argv)
 {
 	table->time_to_die = safe_p_atoi(argv[2]);
 	table->time_to_eat = safe_p_atoi(argv[3]);
@@ -50,11 +62,11 @@ void set_input_vars(t_table *table, int argc, char **argv)
 		table->minimal_times_eaten = -1;
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-	t_table *table;
-	pthread_t control_thread;
-	int i;
+	t_table		*table;
+	pthread_t	control_thread;
+	int			i;
 
 	i = 0;
 	if (argc != 5 && argc != 6)
