@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:27:39 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/01/08 21:28:19 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/01/31 03:08:05 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef struct s_table
 	int				sim_flag;
 	struct timeval	start;
 	pthread_mutex_t	sim_flag_m;
+	pthread_mutex_t	printf_m;
 	int				philo_count;
 	t_philo			*philos;
 	pthread_mutex_t	*fork_mutexes;

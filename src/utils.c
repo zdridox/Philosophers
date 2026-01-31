@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:27:47 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/01/08 21:28:02 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/01/31 03:08:02 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ void	print_state(t_philo *philo, int fork_flag)
 	gettimeofday(&now, NULL);
 	time_diff = (now.tv_sec - philo->table->start.tv_sec) * 1000L + (now.tv_usec
 			- philo->table->start.tv_usec) / 1000L;
+	pthread_mutex_lock(&philo->table->printf_m);
 	if (fork_flag)
 	{
 		printf("%ld %d has taken a fork\n", time_diff, philo->index);
@@ -52,6 +53,7 @@ void	print_state(t_philo *philo, int fork_flag)
 		if (philo->state == DEAD)
 			printf("%ld %d died\n", time_diff, philo->index);
 	}
+	pthread_mutex_unlock(&philo->table->printf_m);
 }
 
 int	check_sim_state(t_table *table)

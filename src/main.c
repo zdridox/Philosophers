@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:27:31 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/01/08 21:28:09 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/01/31 03:11:32 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,19 +24,12 @@ void	init_fork_mutexes(t_table *table, int n)
 	}
 }
 
-void	table_init(t_table *table, int n, void *(*f)(void *))
+void	prepare_philos(t_table *table, void *(*f)(void *))
 {
 	int	i;
 
 	i = 0;
-	table->philo_count = n;
-	table->philos = malloc(sizeof(t_philo) * n);
-	table->fork_mutexes = malloc(sizeof(pthread_mutex_t) * n);
-	table->sim_flag = 1;
-	gettimeofday(&table->start, NULL);
-	pthread_mutex_init(&table->sim_flag_m, NULL);
-	init_fork_mutexes(table, n);
-	while (i < n)
+	while (i < table->philo_count)
 	{
 		pthread_mutex_init(&table->philos[i].eaten_at_m, NULL);
 		pthread_mutex_init(&table->philos[i].state_m, NULL);
@@ -49,6 +42,27 @@ void	table_init(t_table *table, int n, void *(*f)(void *))
 		pthread_create(&table->philos[i].thread, NULL, f, &table->philos[i]);
 		i++;
 	}
+}
+
+t_table	*table_init(int n, void *(*f)(void *))
+{
+	t_table	*table;
+
+	table = malloc(sizeof(t_table));
+	if (!table)
+		return (NULL);
+	table->philos = malloc(sizeof(t_philo) * n);
+	table->fork_mutexes = malloc(sizeof(pthread_mutex_t) * n);
+	if (!table->philos || !table->fork_mutexes)
+		return (NULL);
+	table->philo_count = n;
+	table->sim_flag = 1;
+	gettimeofday(&table->start, NULL);
+	pthread_mutex_init(&table->sim_flag_m, NULL);
+	pthread_mutex_init(&table->printf_m, NULL);
+	init_fork_mutexes(table, n);
+	prepare_philos(table, f);
+	return (table);
 }
 
 void	set_input_vars(t_table *table, int argc, char **argv)
@@ -73,15 +87,17 @@ int	main(int argc, char **argv)
 		return (printf("invalid input"), 0);
 	if (validate_input(argc, argv) != 0)
 		return (printf("invalid input"), 0);
-	table = malloc(sizeof(t_table));
-	set_input_vars(table, argc, argv);
-	table_init(table, safe_p_atoi(argv[1]), philosopher);
-	pthread_create(&control_thread, NULL, control_thread_f, table);
-	pthread_join(control_thread, NULL);
-	while (i < table->philo_count)
+	table = table_init(safe_p_atoi(argv[1]), philosopher);
+	if (table != NULL)
 	{
-		pthread_join(table->philos[i].thread, NULL);
-		i++;
+		set_input_vars(table, argc, argv);
+		pthread_create(&control_thread, NULL, control_thread_f, table);
+		pthread_join(control_thread, NULL);
+		while (i < table->philo_count)
+		{
+			pthread_join(table->philos[i].thread, NULL);
+			i++;
+		}
 	}
 	free(table->fork_mutexes);
 	free(table->philos);
