@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:28:29 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/01/08 21:28:31 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/02/02 17:01:58 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ void	death_check(t_table *table)
 				/ 1000) > table->time_to_die)
 		{
 			pthread_mutex_unlock(&table->philos[i].eaten_at_m);
-			set_state(&table->philos[i], DEAD);
-			print_state(&table->philos[i], 0);
 			pthread_mutex_lock(&table->sim_flag_m);
 			table->sim_flag = 0;
 			pthread_mutex_unlock(&table->sim_flag_m);
+			set_state(&table->philos[i], DEAD);
+			print_state(&table->philos[i], 0);
 			break ;
 		}
 		else
@@ -53,9 +53,9 @@ int	check_eaten_times(t_table *table)
 		if (table->philos[i].times_eaten >= table->minimal_times_eaten)
 			++done_philos_count;
 		pthread_mutex_unlock(&table->philos[i].times_eaten_m);
-		if (done_philos_count == table->philo_count)
-			return (1);
 	}
+	if (done_philos_count == table->philo_count)
+		return (1);
 	return (0);
 }
 

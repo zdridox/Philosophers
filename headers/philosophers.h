@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:27:39 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/01/31 03:08:05 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/02/02 16:58:41 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ t_state				get_state(t_philo *philo);
 void				print_state(t_philo *philo, int fork_flag);
 int					check_sim_state(t_table *table);
 void				philo_think(t_philo *philo);
-void				philo_take_fork(t_philo *philo, int fork_index);
+int					philo_take_fork(t_philo *philo, int fork_index);
 void				philo_eat(t_philo *philo, int f_index, int s_index);
 void				philo_sleep(t_philo *philo);
 void				*control_thread_f(void *arg);
