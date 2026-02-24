@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:27:31 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/02/02 17:07:22 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/02/24 18:00:56 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ void	prepare_philos(t_table *table, void *(*f)(void *))
 		table->philos[i].index = i;
 		table->philos[i].table = table;
 		table->philos[i].times_eaten = 0;
-		gettimeofday(&table->philos[i].eaten_at, NULL);
 		pthread_create(&table->philos[i].thread, NULL, f, &table->philos[i]);
 		i++;
 	}
@@ -51,6 +50,8 @@ t_table	*table_init(int n, void *(*f)(void *))
 	table = malloc(sizeof(t_table));
 	if (!table)
 		return (NULL);
+	pthread_mutex_init(&table->start_flag_m, NULL);
+	table->start_flag = 0;
 	table->philos = malloc(sizeof(t_philo) * n);
 	table->fork_mutexes = malloc(sizeof(pthread_mutex_t) * n);
 	if (!table->philos || !table->fork_mutexes)
