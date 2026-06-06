@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:27:31 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/06/06 20:46:05 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/06/06 22:12:31 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,10 @@ void	mutex_destroyer(t_table *table)
 	
 }
 
-// ADD MUTEX DESTROY
+// need better control over mutexes for forks
+// there are errors for unlocking a not locked and somehow some
+// mutexes stay locked even after all eaten stop not death
+// need to make sure every mutex is unlocked on sim end
 int	main(int argc, char **argv)
 {
 	t_table		*table;
