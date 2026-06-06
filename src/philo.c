@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:28:57 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/02/24 18:17:30 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/05/22 23:26:27 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,17 +54,21 @@ void	*philosopher(void *arg)
 
 	philo = (t_philo *)arg;
 	if (philo->table->philo_count == 1)
+	{
+		philo_take_fork(philo, 0);
+		usleep(philo->table->time_to_die * 1000);
 		return (NULL);
+	}
 	while (1)
 	{
 		pthread_mutex_lock(&philo->table->start_flag_m);
-		if(philo->table->start_flag == 1)
+		if (philo->table->start_flag == 1)
 		{
 			pthread_mutex_unlock(&philo->table->start_flag_m);
-			break;
+			break ;
 		}
 		pthread_mutex_unlock(&philo->table->start_flag_m);
-		//usleep(100);
+		// usleep(100);
 	}
 	while (1)
 	{

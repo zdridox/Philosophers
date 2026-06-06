@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:27:31 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/02/24 18:00:56 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/06/06 20:46:05 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,25 @@ void	prepare_philos(t_table *table, void *(*f)(void *))
 	}
 }
 
-t_table	*table_init(int n, void *(*f)(void *))
+void	set_input_vars(t_table *table, int argc, char **argv)
+{
+	table->time_to_die = safe_p_atoi(argv[2]);
+	table->time_to_eat = safe_p_atoi(argv[3]);
+	table->time_to_sleep = safe_p_atoi(argv[4]);
+	if (argc == 6)
+		table->minimal_times_eaten = safe_p_atoi(argv[5]);
+	else
+		table->minimal_times_eaten = -1;
+}
+
+t_table	*table_init(int n, void *(*f)(void *), int argc, char **argv)
 {
 	t_table	*table;
 
 	table = malloc(sizeof(t_table));
 	if (!table)
 		return (NULL);
+	set_input_vars(table, argc, argv);
 	pthread_mutex_init(&table->start_flag_m, NULL);
 	table->start_flag = 0;
 	table->philos = malloc(sizeof(t_philo) * n);
@@ -66,17 +78,26 @@ t_table	*table_init(int n, void *(*f)(void *))
 	return (table);
 }
 
-void	set_input_vars(t_table *table, int argc, char **argv)
+void	mutex_destroyer(t_table *table)
 {
-	table->time_to_die = safe_p_atoi(argv[2]);
-	table->time_to_eat = safe_p_atoi(argv[3]);
-	table->time_to_sleep = safe_p_atoi(argv[4]);
-	if (argc == 6)
-		table->minimal_times_eaten = safe_p_atoi(argv[5]);
-	else
-		table->minimal_times_eaten = -1;
+	int i;
+
+	i = 0;
+	pthread_mutex_destroy(&table->printf_m);
+	pthread_mutex_destroy(&table->sim_flag_m);
+	pthread_mutex_destroy(&table->start_flag_m);
+	while (i < table->philo_count)
+	{
+		pthread_mutex_destroy(&table->fork_mutexes[i]);
+		pthread_mutex_destroy(&table->philos[i].eaten_at_m);
+		pthread_mutex_destroy(&table->philos[i].times_eaten_m);
+		pthread_mutex_destroy(&table->philos[i].state_m);
+		++i;
+	}
+	
 }
 
+// ADD MUTEX DESTROY
 int	main(int argc, char **argv)
 {
 	t_table		*table;
@@ -88,10 +109,9 @@ int	main(int argc, char **argv)
 		return (printf("invalid input"), 0);
 	if (validate_input(argc, argv) != 0)
 		return (printf("invalid input"), 0);
-	table = table_init(safe_p_atoi(argv[1]), philosopher);
+	table = table_init(safe_p_atoi(argv[1]), philosopher, argc, argv);
 	if (table != NULL)
 	{
-		set_input_vars(table, argc, argv);
 		pthread_create(&control_thread, NULL, control_thread_f, table);
 		pthread_join(control_thread, NULL);
 		while (i < table->philo_count)
@@ -100,6 +120,7 @@ int	main(int argc, char **argv)
 			i++;
 		}
 	}
+	mutex_destroyer(table);
 	free(table->fork_mutexes);
 	free(table->philos);
 	free(table);

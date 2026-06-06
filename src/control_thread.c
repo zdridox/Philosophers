@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:28:29 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/02/24 18:17:21 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/05/22 23:28:26 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ int	check_eaten_times(t_table *table)
 		pthread_mutex_unlock(&table->philos[i].times_eaten_m);
 		if (done_philos_count == table->philo_count)
 			return (1);
+		++i;
 	}
 	return (0);
 }
