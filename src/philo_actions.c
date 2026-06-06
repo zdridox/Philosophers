@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:28:45 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/05/22 23:40:37 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/06/06 22:01:10 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,13 @@ void	philo_think(t_philo *philo)
 			return ;
 		print_state(philo, 0);
 	}
-	if (philo->table->philo_count % 2 == 1)
-	{
-		if (philo->index % 2 == 0)
-			usleep(philo->table->time_to_eat * 1000);
-	}
+    if (philo->table->philo_count % 2 == 1)
+    {
+        if (philo->index % 2 == 0)
+            usleep(philo->table->time_to_eat * 500);
+        else
+            usleep(philo->table->time_to_eat * 200);
+    }
 }
 
 int	philo_take_fork(t_philo *philo, int fork_index)

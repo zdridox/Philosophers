@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:28:29 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/05/22 23:28:26 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/06/06 21:52:35 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void	*control_thread_f(void *arg)
 			pthread_mutex_unlock(&table->sim_flag_m);
 		}
 		death_check(table);
-		//usleep(100);
+		usleep(100);
 	}
 	return (NULL);
 }

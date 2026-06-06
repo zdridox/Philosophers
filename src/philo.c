@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:28:57 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/05/22 23:26:27 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/06/06 22:01:05 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	*philosopher(void *arg)
 			break ;
 		}
 		pthread_mutex_unlock(&philo->table->start_flag_m);
-		// usleep(100);
+		usleep(100);
 	}
 	while (1)
 	{
