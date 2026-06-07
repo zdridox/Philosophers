@@ -67,6 +67,7 @@ void	*control_thread_f(void *arg)
 
 	table = (t_table *)arg;
 	i = 0;
+	gettimeofday(&table->start, NULL);
 	while (i < table->philo_count)
 	{
 		pthread_mutex_lock(&table->philos[i].eaten_at_m);

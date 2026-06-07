@@ -70,7 +70,6 @@ t_table	*table_init(int n, void *(*f)(void *), int argc, char **argv)
 		return (NULL);
 	table->philo_count = n;
 	table->sim_flag = 1;
-	gettimeofday(&table->start, NULL);
 	pthread_mutex_init(&table->sim_flag_m, NULL);
 	pthread_mutex_init(&table->printf_m, NULL);
 	init_fork_mutexes(table, n);
@@ -97,10 +96,6 @@ void	mutex_destroyer(t_table *table)
 	
 }
 
-// need better control over mutexes for forks
-// there are errors for unlocking a not locked and somehow some
-// mutexes stay locked even after all eaten stop not death
-// need to make sure every mutex is unlocked on sim end
 int	main(int argc, char **argv)
 {
 	t_table		*table;
