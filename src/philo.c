@@ -29,16 +29,11 @@ void	handle_indexes(t_philo *philo, int *offset, int *f_index, int *s_index)
 
 void	philo_logic(t_philo *philo, int f_index, int s_index)
 {
-	int	fork_check;
-
-	fork_check = 0;
 	philo_think(philo);
-	fork_check += philo_take_fork(philo, f_index);
-	fork_check += philo_take_fork(philo, s_index);
-	if (fork_check != 2)
-	{
-		pthread_mutex_unlock(&(philo->table->fork_mutexes)[f_index]);
-		pthread_mutex_unlock(&(philo->table->fork_mutexes)[s_index]);
+	if (!philo_take_fork(philo, f_index))
+		return ;
+	if (!philo_take_fork(philo, s_index)) {
+		pthread_mutex_unlock(&philo->table->fork_mutexes[f_index]);
 		return ;
 	}
 	philo_eat(philo, f_index, s_index);
@@ -72,10 +67,10 @@ void	*philosopher(void *arg)
 	}
 	while (1)
 	{
-		if (!check_sim_state(philo->table))
-			break ;
 		handle_indexes(philo, &offset, &first_index, &second_index);
 		philo_logic(philo, first_index, second_index);
+		if (!check_sim_state(philo->table))
+			break ;
 	}
 	return (NULL);
 }
