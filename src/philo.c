@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:28:57 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/06/20 18:02:01 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/06/20 21:25:54 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,13 +64,13 @@ void	*philosopher(void *arg)
 	int		second_index;
 
 	philo = (t_philo *)arg;
+	wait_for_start(philo);
 	if (philo->table->philo_count == 1)
 	{
 		philo_take_fork(philo, 0);
 		usleep(philo->table->time_to_die * 1000);
 		return (NULL);
 	}
-	wait_for_start(philo);
 	while (1)
 	{
 		handle_indexes(philo, &offset, &first_index, &second_index);
