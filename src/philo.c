@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:28:57 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/06/06 22:01:05 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/06/20 18:02:01 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,28 @@ void	philo_logic(t_philo *philo, int f_index, int s_index)
 	philo_think(philo);
 	if (!philo_take_fork(philo, f_index))
 		return ;
-	if (!philo_take_fork(philo, s_index)) {
+	if (!philo_take_fork(philo, s_index))
+	{
 		pthread_mutex_unlock(&philo->table->fork_mutexes[f_index]);
 		return ;
 	}
 	philo_eat(philo, f_index, s_index);
 	philo_sleep(philo);
+}
+
+void	wait_for_start(t_philo *philo)
+{
+	while (1)
+	{
+		pthread_mutex_lock(&philo->table->start_flag_m);
+		if (philo->table->start_flag == 1)
+		{
+			pthread_mutex_unlock(&philo->table->start_flag_m);
+			break ;
+		}
+		pthread_mutex_unlock(&philo->table->start_flag_m);
+		usleep(100);
+	}
 }
 
 void	*philosopher(void *arg)
@@ -54,17 +70,7 @@ void	*philosopher(void *arg)
 		usleep(philo->table->time_to_die * 1000);
 		return (NULL);
 	}
-	while (1)
-	{
-		pthread_mutex_lock(&philo->table->start_flag_m);
-		if (philo->table->start_flag == 1)
-		{
-			pthread_mutex_unlock(&philo->table->start_flag_m);
-			break ;
-		}
-		pthread_mutex_unlock(&philo->table->start_flag_m);
-		usleep(100);
-	}
+	wait_for_start(philo);
 	while (1)
 	{
 		handle_indexes(philo, &offset, &first_index, &second_index);

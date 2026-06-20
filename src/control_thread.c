@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:28:29 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/06/06 21:52:35 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/06/20 18:04:07 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,10 @@ int	check_eaten_times(t_table *table)
 	return (0);
 }
 
-void	*control_thread_f(void *arg)
+void	control_thread_init(t_table *table)
 {
-	t_table	*table;
-	int		i;
+	int	i;
 
-	table = (t_table *)arg;
 	i = 0;
 	gettimeofday(&table->start, NULL);
 	while (i < table->philo_count)
@@ -78,6 +76,14 @@ void	*control_thread_f(void *arg)
 	pthread_mutex_lock(&table->start_flag_m);
 	table->start_flag = 1;
 	pthread_mutex_unlock(&table->start_flag_m);
+}
+
+void	*control_thread_f(void *arg)
+{
+	t_table	*table;
+
+	table = (t_table *)arg;
+	control_thread_init(table);
 	while (1)
 	{
 		if (!check_sim_state(table))

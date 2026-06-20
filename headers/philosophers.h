@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:27:39 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/02/24 17:17:00 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/06/20 17:52:53 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,5 +72,7 @@ int					philo_take_fork(t_philo *philo, int fork_index);
 void				philo_eat(t_philo *philo, int f_index, int s_index);
 void				philo_sleep(t_philo *philo);
 void				*control_thread_f(void *arg);
+void				init_fork_mutexes(t_table *table, int n);
+void				mutex_destroyer(t_table *table);
 
 #endif

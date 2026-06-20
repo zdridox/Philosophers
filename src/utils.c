@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:27:47 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/06/06 20:12:36 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/06/20 18:07:30 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,22 +29,8 @@ int	safe_p_atoi(const char *str)
 	return (res);
 }
 
-void	print_state(t_philo *philo, int fork_flag)
+void	print_state_helper(t_philo *philo, long time_diff, int fork_flag)
 {
-	struct timeval	now;
-	long			time_diff;
-
-	gettimeofday(&now, NULL);
-	time_diff = (now.tv_sec - philo->table->start.tv_sec) * 1000L + (now.tv_usec
-			- philo->table->start.tv_usec) / 1000L;
-	pthread_mutex_lock(&philo->table->printf_m);
-	if (philo->state == DEAD)
-		printf("%ld %d died\n", time_diff, philo->index);
-	if (!check_sim_state(philo->table))
-	{
-		pthread_mutex_unlock(&philo->table->printf_m);
-		return ;
-	}
 	pthread_mutex_lock(&philo->state_m);
 	if (fork_flag)
 	{
@@ -61,6 +47,25 @@ void	print_state(t_philo *philo, int fork_flag)
 	}
 	pthread_mutex_unlock(&philo->table->printf_m);
 	pthread_mutex_unlock(&philo->state_m);
+}
+
+void	print_state(t_philo *philo, int fork_flag)
+{
+	struct timeval	now;
+	long			time_diff;
+
+	gettimeofday(&now, NULL);
+	time_diff = (now.tv_sec - philo->table->start.tv_sec) * 1000L + (now.tv_usec
+			- philo->table->start.tv_usec) / 1000L;
+	pthread_mutex_lock(&philo->table->printf_m);
+	if (philo->state == DEAD)
+		printf("%ld %d died\n", time_diff, philo->index);
+	if (!check_sim_state(philo->table))
+	{
+		pthread_mutex_unlock(&philo->table->printf_m);
+		return ;
+	}
+	print_state_helper(philo, time_diff, fork_flag);
 }
 
 int	check_sim_state(t_table *table)

@@ -6,23 +6,11 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:27:31 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/06/06 22:12:31 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/06/20 17:54:45 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/philosophers.h"
-
-void	init_fork_mutexes(t_table *table, int n)
-{
-	int	i;
-
-	i = 0;
-	while (i < n)
-	{
-		pthread_mutex_init(&table->fork_mutexes[i], NULL);
-		i++;
-	}
-}
 
 void	prepare_philos(t_table *table, void *(*f)(void *))
 {
@@ -75,25 +63,6 @@ t_table	*table_init(int n, void *(*f)(void *), int argc, char **argv)
 	init_fork_mutexes(table, n);
 	prepare_philos(table, f);
 	return (table);
-}
-
-void	mutex_destroyer(t_table *table)
-{
-	int i;
-
-	i = 0;
-	pthread_mutex_destroy(&table->printf_m);
-	pthread_mutex_destroy(&table->sim_flag_m);
-	pthread_mutex_destroy(&table->start_flag_m);
-	while (i < table->philo_count)
-	{
-		pthread_mutex_destroy(&table->fork_mutexes[i]);
-		pthread_mutex_destroy(&table->philos[i].eaten_at_m);
-		pthread_mutex_destroy(&table->philos[i].times_eaten_m);
-		pthread_mutex_destroy(&table->philos[i].state_m);
-		++i;
-	}
-	
 }
 
 int	main(int argc, char **argv)
