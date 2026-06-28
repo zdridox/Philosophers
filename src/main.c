@@ -6,7 +6,7 @@
 /*   By: mzdrodow <mzdrodow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 21:27:31 by mzdrodow          #+#    #+#             */
-/*   Updated: 2026/06/20 17:54:45 by mzdrodow         ###   ########.fr       */
+/*   Updated: 2026/06/28 20:47:12 by mzdrodow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,10 @@ t_table	*table_init(int n, void *(*f)(void *), int argc, char **argv)
 	pthread_mutex_init(&table->start_flag_m, NULL);
 	table->start_flag = 0;
 	table->philos = malloc(sizeof(t_philo) * n);
+	if(!table->philos)
+		return (NULL);
 	table->fork_mutexes = malloc(sizeof(pthread_mutex_t) * n);
-	if (!table->philos || !table->fork_mutexes)
+	if (!table->fork_mutexes)
 		return (NULL);
 	table->philo_count = n;
 	table->sim_flag = 1;
